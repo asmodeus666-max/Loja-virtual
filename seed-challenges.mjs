@@ -1,0 +1,306 @@
+import mysql from 'mysql2/promise';
+
+const defaultChallenges = [
+  {
+    subject: 'Ciências',
+    title: 'Ciclo da Água',
+    description: 'Aprenda sobre o ciclo da água e seus processos',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Qual é o primeiro estágio do ciclo da água?',
+        optionA: 'Condensação',
+        optionB: 'Evaporação',
+        optionC: 'Precipitação',
+        optionD: 'Infiltração',
+        correctAnswer: 'B',
+      },
+      {
+        text: 'O que acontece durante a condensação?',
+        optionA: 'Água sólida vira líquida',
+        optionB: 'Vapor de água vira gotículas de água',
+        optionC: 'Água líquida vira vapor',
+        optionD: 'Água cai como chuva',
+        correctAnswer: 'B',
+      },
+    ],
+  },
+  {
+    subject: 'Ciências',
+    title: 'Fotossíntese',
+    description: 'Entenda como as plantas produzem seu próprio alimento',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Qual é o principal objetivo da fotossíntese?',
+        optionA: 'Produzir oxigênio',
+        optionB: 'Absorver água',
+        optionC: 'Produzir glicose (alimento)',
+        optionD: 'Liberar dióxido de carbono',
+        correctAnswer: 'C',
+      },
+      {
+        text: 'Qual é o pigmento responsável pela cor verde das plantas?',
+        optionA: 'Carotenóide',
+        optionB: 'Xantofila',
+        optionC: 'Clorofila',
+        optionD: 'Antocianina',
+        correctAnswer: 'C',
+      },
+    ],
+  },
+  {
+    subject: 'Português',
+    title: 'Figuras de Linguagem',
+    description: 'Identifique e compreenda as figuras de linguagem',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Qual figura de linguagem está presente em "Aquele rapaz é um leão"?',
+        optionA: 'Metáfora',
+        optionB: 'Metonímia',
+        optionC: 'Hipérbole',
+        optionD: 'Aliteração',
+        correctAnswer: 'A',
+      },
+      {
+        text: 'O que é uma onomatopeia?',
+        optionA: 'Repetição de sons',
+        optionB: 'Imitação de sons da natureza',
+        optionC: 'Comparação entre coisas',
+        optionD: 'Exagero intencional',
+        correctAnswer: 'B',
+      },
+    ],
+  },
+  {
+    subject: 'Português',
+    title: 'Verbos Irregulares',
+    description: 'Aprenda sobre verbos irregulares em português',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Qual é a conjugação correta do verbo "fazer" na 1ª pessoa do presente?',
+        optionA: 'Faço',
+        optionB: 'Fasso',
+        optionC: 'Faizo',
+        optionD: 'Fação',
+        correctAnswer: 'A',
+      },
+      {
+        text: 'Como se conjuga o verbo "ir" no pretérito perfeito (1ª pessoa)?',
+        optionA: 'Ia',
+        optionB: 'Fui',
+        optionC: 'Vou',
+        optionD: 'Iba',
+        correctAnswer: 'B',
+      },
+    ],
+  },
+  {
+    subject: 'Matemática',
+    title: 'Geometria Básica',
+    description: 'Conceitos fundamentais de geometria',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Qual é a soma dos ângulos internos de um triângulo?',
+        optionA: '90 graus',
+        optionB: '180 graus',
+        optionC: '270 graus',
+        optionD: '360 graus',
+        correctAnswer: 'B',
+      },
+      {
+        text: 'Quantos lados tem um pentágono?',
+        optionA: '4',
+        optionB: '5',
+        optionC: '6',
+        optionD: '7',
+        correctAnswer: 'B',
+      },
+    ],
+  },
+  {
+    subject: 'Matemática',
+    title: 'Frações',
+    description: 'Operações com frações',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Qual é o resultado de 1/2 + 1/4?',
+        optionA: '1/6',
+        optionB: '2/6',
+        optionC: '3/4',
+        optionD: '1/8',
+        correctAnswer: 'C',
+      },
+      {
+        text: 'Como simplificamos a fração 6/9?',
+        optionA: '2/3',
+        optionB: '1/2',
+        optionC: '3/4',
+        optionD: '2/4',
+        correctAnswer: 'A',
+      },
+    ],
+  },
+  {
+    subject: 'História',
+    title: 'Descobrimento do Brasil',
+    description: 'Fatos sobre o descobrimento do Brasil',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Em que ano o Brasil foi descoberto?',
+        optionA: '1492',
+        optionB: '1500',
+        optionC: '1502',
+        optionD: '1510',
+        correctAnswer: 'B',
+      },
+      {
+        text: 'Quem foi o navegador português que descobriu o Brasil?',
+        optionA: 'Vasco da Gama',
+        optionB: 'Cristóvão Colombo',
+        optionC: 'Pedro Álvares Cabral',
+        optionD: 'Bartolomeu Dias',
+        correctAnswer: 'C',
+      },
+    ],
+  },
+  {
+    subject: 'História',
+    title: 'Revolução Francesa',
+    description: 'Principais eventos da Revolução Francesa',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Em que ano começou a Revolução Francesa?',
+        optionA: '1776',
+        optionB: '1789',
+        optionC: '1799',
+        optionD: '1815',
+        correctAnswer: 'B',
+      },
+      {
+        text: 'Qual era o lema da Revolução Francesa?',
+        optionA: '"Liberdade, Igualdade, Fraternidade"',
+        optionB: '"Viva a Monarquia"',
+        optionC: '"Deus e Rei"',
+        optionD: '"Ordem e Progresso"',
+        correctAnswer: 'A',
+      },
+    ],
+  },
+  {
+    subject: 'Geografia',
+    title: 'Continentes',
+    description: 'Aprenda sobre os continentes do mundo',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Quantos continentes existem?',
+        optionA: '5',
+        optionB: '6',
+        optionC: '7',
+        optionD: '8',
+        correctAnswer: 'C',
+      },
+      {
+        text: 'Qual é o maior continente?',
+        optionA: 'África',
+        optionB: 'América do Norte',
+        optionC: 'Ásia',
+        optionD: 'Europa',
+        correctAnswer: 'C',
+      },
+    ],
+  },
+  {
+    subject: 'Geografia',
+    title: 'Clima e Vegetação',
+    description: 'Relação entre clima e tipos de vegetação',
+    rewardCoins: 10,
+    questions: [
+      {
+        text: 'Qual é o tipo de vegetação predominante na Amazônia?',
+        optionA: 'Deserto',
+        optionB: 'Floresta Tropical',
+        optionC: 'Savana',
+        optionD: 'Tundra',
+        correctAnswer: 'B',
+      },
+      {
+        text: 'Em qual clima encontramos a vegetação de Tundra?',
+        optionA: 'Tropical',
+        optionB: 'Árido',
+        optionC: 'Polar',
+        optionD: 'Temperado',
+        correctAnswer: 'C',
+      },
+    ],
+  },
+];
+
+async function seedChallenges() {
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || '3d_print_shop',
+  });
+
+  try {
+    console.log('🌱 Iniciando seed de desafios...');
+
+    for (const challenge of defaultChallenges) {
+      // Check if challenge already exists
+      const [existing] = await connection.execute(
+        'SELECT id FROM challenges WHERE title = ?',
+        [challenge.title]
+      );
+
+      if (existing.length > 0) {
+        console.log(`⏭️  Desafio "${challenge.title}" já existe. Pulando...`);
+        continue;
+      }
+
+      // Insert challenge
+      const [result] = await connection.execute(
+        'INSERT INTO challenges (title, description, subject, rewardCoins) VALUES (?, ?, ?, ?)',
+        [challenge.title, challenge.description, challenge.subject, challenge.rewardCoins]
+      );
+
+      const challengeId = result.insertId;
+      console.log(`✅ Desafio criado: "${challenge.title}" (ID: ${challengeId})`);
+
+      // Insert questions
+      for (const question of challenge.questions) {
+        await connection.execute(
+          'INSERT INTO questions (challengeId, text, optionA, optionB, optionC, optionD, correctAnswer) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [
+            challengeId,
+            question.text,
+            question.optionA,
+            question.optionB,
+            question.optionC,
+            question.optionD,
+            question.correctAnswer,
+          ]
+        );
+      }
+
+      console.log(`   └─ ${challenge.questions.length} perguntas adicionadas`);
+    }
+
+    console.log('🎉 Seed de desafios concluído com sucesso!');
+  } catch (error) {
+    console.error('❌ Erro ao fazer seed:', error);
+    process.exit(1);
+  } finally {
+    await connection.end();
+  }
+}
+
+seedChallenges();
